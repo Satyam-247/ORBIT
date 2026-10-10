@@ -1,0 +1,10 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX 100
+typedef struct {int id,arrival,burst,priority,completion,waiting,turnaround,response;} P;
+void swap(P*a,P*b){P t=*a;*a=*b;*b=t;}
+void sortArrival(P p[],int n){for(int i=0;i<n-1;i++)for(int j=0;j<n-i-1;j++)if(p[j].arrival>p[j+1].arrival)swap(&p[j],&p[j+1]);}
+void fcfs(P p[],int n){sortArrival(p,n);int t=0;for(int i=0;i<n;i++){if(t<p[i].arrival)t=p[i].arrival;p[i].response=t-p[i].arrival;t+=p[i].burst;p[i].completion=t;p[i].turnaround=t-p[i].arrival;p[i].waiting=p[i].turnaround-p[i].burst;}}
+void sjf(P p[],int n){int done=0,t=0,u[MAX]={0};while(done<n){int k=-1;for(int i=0;i<n;i++)if(!u[i]&&p[i].arrival<=t&&(k<0||p[i].burst<p[k].burst))k=i;if(k<0){t++;continue;}p[k].response=t-p[k].arrival;t+=p[k].burst;p[k].completion=t;p[k].turnaround=t-p[k].arrival;p[k].waiting=p[k].turnaround-p[k].burst;u[k]=1;done++;}}
+void priority(P p[],int n){int done=0,t=0,u[MAX]={0};while(done<n){int k=-1;for(int i=0;i<n;i++)if(!u[i]&&p[i].arrival<=t&&(k<0||p[i].priority<p[k].priority))k=i;if(k<0){t++;continue;}p[k].response=t-p[k].arrival;t+=p[k].burst;p[k].completion=t;p[k].turnaround=t-p[k].arrival;p[k].waiting=p[k].turnaround-p[k].burst;u[k]=1;done++;}}
+int main(){char alg[20];int n;if(scanf("%19s",alg)!=1||scanf("%d",&n)!=1||n<1||n>MAX)return 1;P p[MAX];for(int i=0;i<n;i++)if(scanf("%d,%d,%d,%d",&p[i].id,&p[i].arrival,&p[i].burst,&p[i].priority)!=4)return 1;if(strcmp(alg,"FCFS")==0)fcfs(p,n);else if(strcmp(alg,"SJF")==0)sjf(p,n);else if(strcmp(alg,"PRIORITY")==0)priority(p,n);else return 1;double w=0,t=0,r=0;printf("{\"algorithm\":\"%s\",\"results\":[",alg);for(int i=0;i<n;i++){w+=p[i].waiting;t+=p[i].turnaround;r+=p[i].response;if(i)printf(",");printf("{\"id\":%d,\"waiting_time\":%d,\"turnaround_time\":%d,\"response_time\":%d}",p[i].id,p[i].waiting,p[i].turnaround,p[i].response);}printf("],\"schedule\":[");for(int i=0;i<n;i++){if(i)printf(",");printf("{\"process\":%d,\"burst\":%d}",p[i].id,p[i].burst);}printf("],\"average_waiting_time\":%.2f,\"average_turnaround_time\":%.2f,\"average_response_time\":%.2f}\n",w/n,t/n,r/n);return 0;}

@@ -26,7 +26,7 @@ app.get('/api/bookings', requireAuth, async (req,res) => {
   try {
     const base = `SELECT b.booking_id,b.user_id,b.start_time,b.end_time,b.status,b.priority,b.service_time,r.name resource_name,r.resource_type FROM bookings b JOIN resources r ON r.resource_id=b.resource_id`;
     const [rows] = req.user.role === 'ADMIN'
-      ? await pool.query(`${base} ORDER BY b.booking_id DESC`)
+      ? await pool.execute(`${base} WHERE b.resource_id=? ORDER BY b.booking_id DESC`, [req.user.resourceId || 0])
       : await pool.execute(`${base} WHERE b.user_id=? ORDER BY b.booking_id DESC`, [req.user.userId]);
     res.json(rows);
   } catch(e) { res.status(500).json({error:'Could not load bookings.'}); }

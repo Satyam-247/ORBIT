@@ -2,6 +2,21 @@
   "name": "orbit-backend",
   "private": true,
   "type": "module",
-  "scripts": {"dev": "node --watch src/server.js", "start": "node src/server.js", "test:transaction": "node scripts/test-transaction.js"},
-  "dependencies": {"bcryptjs": "^2.4.3", "cors": "^2.8.5", "dotenv": "^16.4.7", "express": "^4.21.2", "jsonwebtoken": "^9.0.2", "mysql2": "^3.12.0"}
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "build:scheduler": "gcc -std=c11 -O2 -Wall -Wextra -pedantic ../scheduler/scheduler.c -o ../scheduler/scheduler.exe",
+    "build:deadlock": "gcc -std=c11 -O2 -Wall -Wextra -pedantic ../scheduler/deadlock.c -o ../scheduler/deadlock.exe",
+    "test": "npm run test:scheduler && npm run test:deadlock",
+    "test:scheduler": "python ../scheduler/test_scheduler.py",
+    "test:deadlock": "python ../scheduler/test_deadlock.py"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.12.0"
+  }
 }

@@ -32,6 +32,7 @@ router.post('/register', async (req, res) => {
   const password = String(req.body.password || '');
   const role = String(req.body.role || 'STUDENT').trim().toUpperCase();
   const resourceId = Number(req.body.resourceId);
+  const adminCode = String(req.body.adminCode || '');
 
   if (!name || name.length > 100 || !fullNamePattern.test(name)) {
     return res.status(400).json({ error: 'Full name must contain only letters and spaces. Numbers and special characters are not allowed.' });
@@ -41,6 +42,9 @@ router.post('/register', async (req, res) => {
   }
   if (!allowedRoles.has(role)) {
     return res.status(400).json({ error: 'Select a valid account role.' });
+  }
+  if (role === 'ADMIN' && (!process.env.ADMIN_REGISTRATION_CODE || adminCode !== process.env.ADMIN_REGISTRATION_CODE)) {
+    return res.status(403).json({ error: 'Admin registration requires a valid administrator invitation code.' });
   }
   if (role === 'ADMIN' && (!Number.isInteger(resourceId) || resourceId < 1)) {
     return res.status(400).json({ error: 'Select the resource this admin will manage.' });

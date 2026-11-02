@@ -1,4 +1,10 @@
-
-backend/.env
-backend/node_modules/
-frontend/node_modules/
+**/node_modules/
+**/.env
+**/.env.*
+!**/.env.example
+**/dist/
+**/*.log
+scheduler/scheduler.exe
+scheduler/deadlock.exe
+.DS_Store
+.vscode/
